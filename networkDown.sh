@@ -7,8 +7,11 @@
 # Exit on first error
 set -ex
 
+WALLET_D="./nodeapp/wallet"
 # Bring the test network down
-rm ~/dev/solib/nodeapp/wallet/*
+if [ -d ${WALLET_D} ]; then
+    rm ${WALLET_D}/*
+fi
 
 pushd ~/fabric-samples/test-network
 ./network.sh down
