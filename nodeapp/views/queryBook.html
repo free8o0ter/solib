@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+    <style>
+        table, td, th {
+        border : 1px solid black;
+        border-collapse : collapse;
+        };
+    </style>
+    <script
+        src="https://code.jquery.com/jquery-3.7.0.min.js"
+        integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g="
+        crossorigin="anonymous"></script>
+    <title>도서 조회 페이지</title>
+</head>
+<body>
+    <div class='container'>
+        <h1>도서 조회 페이지입니다.</h1>
+        <p>등록에 필요한 정보들을 입력해 주세요.</p>
+        <br>
+        <label class="form-label">도서명</label><br>
+        <input type="text" class="from-control" id="bookName">
+        <br>
+        <label class="form-label">소유자 ID</label><br>
+        <input type="text" class="from-control" id="ownerId">
+        <br><br>
+        <button class="btn btn-success" id="btn">도서 조회</button>
+        <button class="btn btn-success" id="btn_history">이력 조회</button>
+    </div>
+    <div class="container" id="result">
+
+    </div>
+    <br><br>
+    <div class="container">
+        <div id="history_container">
+            <table id="history_table">
+
+            </table>
+        </div>
+    </div>
+</body>
+<script>
+    $("#btn").click(()=>{
+        const bookName = $("#bookName").val();
+        const owner = $("#ownerId").val();
+
+
+        $.get("/book", {bookName, owner}, (data, status) => {
+            $("#result").empty();
+            const res = JSON.stringify(data);
+            $("#result").append(res);
+        })
+    });
+
+    $("#btn_history").click(()=>{
+        const bookName = $("#bookName").val();
+        const owner = $("#ownerId").val();
+
+
+        $.get("/book/history", {bookName, owner}, (data, status) => {
+            console.log(data.result);
+            $("#history_table").empty();
+            
+            if(data.result == "success"){
+                for(let i = 0; i < data.msg.length; i++){
+                    $("#history_table").append('<tr><td>TxId</td><td>' + data.msg[i].txId + "</td><td>" + data.msg[i].timestamp + "</td><td>" + JSON.stringify(data.msg[i].record) + "</td></tr>");                    
+                }
+            } else {
+                $("#history_table").append("<tr><td>" + "조회 실패" +"</td></tr>");
+            }
+        })
+    })
+</script>
+
+</html>
